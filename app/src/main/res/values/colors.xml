@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Colores originales -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Colores para la app -->
+    <color name="primary">#FF1976D2</color>
+    <color name="primary_dark">#FF1565C0</color>
+    <color name="accent">#FFFF5722</color>
+    <color name="background_primary">#FFF5F5F5</color>
+
+    <!-- Estados de conexión -->
+    <color name="status_connected">#FF4CAF50</color>
+    <color name="status_disconnected">#FFF44336</color>
+    <color name="status_connecting">#FFFF9800</color>
+
+    <!-- Tabs -->
+    <color name="tab_text_unselected">#B3FFFFFF</color>
+
+    <!-- Grises que faltaban -->
+    <color name="gray_100">#FFF5F5F5</color>
+    <color name="gray_300">#FFE0E0E0</color>
 </resources>

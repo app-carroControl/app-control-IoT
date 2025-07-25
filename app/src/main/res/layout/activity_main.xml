@@ -1,19 +1,147 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="vertical"
+        android:padding="16dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Header -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Estado de conexión -->
+        <TextView
+            android:id="@+id/tvConnectionStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Desconectado"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:padding="8dp"
+            android:background="@drawable/status_background"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Sección de conexión -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Conectar Dispositivo"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="24dp">
+
+            <Button
+                android:id="@+id/btnWifiConnect"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="WiFi"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/btnBluetoothConnect"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Bluetooth"
+                android:layout_marginStart="8dp" />
+
+        </LinearLayout>
+
+        <!-- Sección de control -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Control del Robot"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Control direccional -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp">
+
+            <!-- Adelante -->
+            <Button
+                android:id="@+id/btnForward"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_centerHorizontal="true"
+                android:text="↑"
+                android:textSize="24sp"
+                android:enabled="false" />
+
+            <!-- Izquierda -->
+            <Button
+                android:id="@+id/btnLeft"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_below="@id/btnForward"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="8dp"
+                android:text="←"
+                android:textSize="24sp"
+                android:enabled="false" />
+
+            <!-- Stop -->
+            <Button
+                android:id="@+id/btnStop"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_below="@id/btnForward"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="8dp"
+                android:text="⏹"
+                android:textSize="20sp"
+                android:enabled="false" />
+
+            <!-- Derecha -->
+            <Button
+                android:id="@+id/btnRight"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_below="@id/btnForward"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="8dp"
+                android:text="→"
+                android:textSize="24sp"
+                android:enabled="false" />
+
+            <!-- Atrás -->
+            <Button
+                android:id="@+id/btnBackward"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_below="@id/btnStop"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="8dp"
+                android:text="↓"
+                android:textSize="24sp"
+                android:enabled="false" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</ScrollView>
