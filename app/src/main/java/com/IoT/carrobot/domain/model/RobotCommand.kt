@@ -3,40 +3,35 @@ package com.IoT.carrobot.domain.model
 data class RobotCommand(
     val action: RobotAction,
     val speed: Int = 0,
-    val value: Boolean = false // Para LEDs, bocina, etc.
-)
+    val value: Any? = null,
+    val timestamp: Long = System.currentTimeMillis()
+) {
+    /**
+     * Convierte el comando a un string para envío por WiFi/Bluetooth
+     * Formato: "ACTION:SPEED:VALUE:TIMESTAMP"
+     */
+    fun toCommandString(): String {
+        return "${action.name}:$speed:${value ?: ""}:$timestamp"
+    }
 
-enum class RobotAction {
-    // Movimiento
-    FORWARD,
-    BACKWARD,
-    LEFT,
-    RIGHT,
-    STOP,
-
-    // LEDs
-    LED_FRONT_ON,
-    LED_FRONT_OFF,
-    LED_BACK_ON,
-    LED_BACK_OFF,
-    LED_LEFT_ON,
-    LED_LEFT_OFF,
-    LED_RIGHT_ON,
-    LED_RIGHT_OFF,
-
-    // Sonido
-    HORN_ON,
-    HORN_OFF,
-    BEEP,
-
-    // Sensores
-    ULTRASONIC_READ,
-    SERVO_ROTATE,
-
-    // Cámara
-    CAMERA_UP,
-    CAMERA_DOWN,
-    CAMERA_LEFT,
-    CAMERA_RIGHT,
-    CAMERA_CENTER
+    companion object {
+        /**
+         * Crea un comando desde un string recibido
+         */
+        fun fromString(commandString: String): RobotCommand? {
+            return try {
+                val parts = commandString.split(":")
+                if (parts.size >= 2) {
+                    RobotCommand(
+                        action = RobotAction.valueOf(parts[0]),
+                        speed = parts.getOrNull(1)?.toIntOrNull() ?: 0,
+                        value = parts.getOrNull(2),
+                        timestamp = parts.getOrNull(3)?.toLongOrNull() ?: System.currentTimeMillis()
+                    )
+                } else null
+            } catch (e: Exception) {
+                null
+            }
+        }
+    }
 }

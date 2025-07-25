@@ -171,7 +171,95 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    // Funciones de sonido
+    // ================================
+    // NUEVAS FUNCIONES DE AUTOMATIZACIÓN
+    // ================================
+
+    /**
+     * Activa/desactiva el modo de evitar obstáculos
+     */
+    fun toggleObstacleAvoidance() {
+        viewModelScope.launch {
+            if (!isConnected()) return@launch
+
+            val newState = !_robotState.value.obstacleAvoidanceOn
+            val action = if (newState) RobotAction.OBSTACLE_AVOIDANCE_ON else RobotAction.OBSTACLE_AVOIDANCE_OFF
+
+            sendCommand(RobotCommand(action = action, value = newState))
+            _robotState.value = _robotState.value.copy(
+                obstacleAvoidanceOn = newState,
+                // Si se activa evitar obstáculos, desactivar seguir línea
+                lineFollowingOn = if (newState) false else _robotState.value.lineFollowingOn
+            )
+
+            Timber.d("Evitar obstáculos: ${if (newState) "ACTIVADO" else "DESACTIVADO"}")
+        }
+    }
+
+    /**
+     * Activa/desactiva el modo de seguir línea
+     */
+    fun toggleLineFollowing() {
+        viewModelScope.launch {
+            if (!isConnected()) return@launch
+
+            val newState = !_robotState.value.lineFollowingOn
+            val action = if (newState) RobotAction.LINE_FOLLOWING_ON else RobotAction.LINE_FOLLOWING_OFF
+
+            sendCommand(RobotCommand(action = action, value = newState))
+            _robotState.value = _robotState.value.copy(
+                lineFollowingOn = newState,
+                // Si se activa seguir línea, desactivar evitar obstáculos
+                obstacleAvoidanceOn = if (newState) false else _robotState.value.obstacleAvoidanceOn
+            )
+
+            Timber.d("Seguir línea: ${if (newState) "ACTIVADO" else "DESACTIVADO"}")
+        }
+    }
+
+    /**
+     * Activa/desactiva las luces automáticas
+     */
+    fun toggleAutoLights() {
+        viewModelScope.launch {
+            if (!isConnected()) return@launch
+
+            val newState = !_robotState.value.autoLightsOn
+            val action = if (newState) RobotAction.AUTO_LIGHTS_ON else RobotAction.AUTO_LIGHTS_OFF
+
+            sendCommand(RobotCommand(action = action, value = newState))
+            _robotState.value = _robotState.value.copy(autoLightsOn = newState)
+
+            Timber.d("Luces automáticas: ${if (newState) "ACTIVADAS" else "DESACTIVADAS"}")
+        }
+    }
+
+    /**
+     * Calibra todos los sensores del robot
+     */
+    fun calibrateSensors() {
+        viewModelScope.launch {
+            if (!isConnected()) return@launch
+
+            Timber.d("Iniciando calibración de sensores...")
+            sendCommand(RobotCommand(action = RobotAction.CALIBRATE_SENSORS))
+
+            // Simular proceso de calibración
+            _commandResult.value = "🔄 Calibrando sensores..."
+            delay(3000)
+            _commandResult.value = "✅ Sensores calibrados"
+
+            Timber.d("Calibración completada")
+        }
+    }
+
+    // ================================
+    // FUNCIONES DE SONIDO (sin cambios)
+    // ================================
+
+    /**
+     * Activa la bocina por 1 segundo
+     */
     fun activateHorn() {
         viewModelScope.launch {
             if (!isConnected()) return@launch
@@ -185,6 +273,9 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Emite un beep corto
+     */
     fun beep() {
         viewModelScope.launch {
             if (!isConnected()) return@launch
@@ -192,7 +283,13 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    // Función para leer ultrasonido
+    // ================================
+    // FUNCIÓN PARA LEER ULTRASONIDO
+    // ================================
+
+    /**
+     * Lee la distancia del sensor ultrasónico
+     */
     fun readUltrasonic() {
         viewModelScope.launch {
             if (!isConnected()) return@launch
@@ -205,6 +302,10 @@ class MainViewModel : ViewModel() {
             _robotState.value = _robotState.value.copy(ultrasonicDistance = distance)
         }
     }
+
+    // ================================
+    // FUNCIONES PRIVADAS Y UTILITARIAS
+    // ================================
 
     private suspend fun sendCommand(command: RobotCommand) {
         try {
@@ -232,5 +333,53 @@ class MainViewModel : ViewModel() {
 
     private fun isConnected(): Boolean {
         return _connectionState.value.status == ConnectionStatus.CONNECTED
+    }
+
+    // ================================
+    // FUNCIONES ADICIONALES PARA FUTURAS MEJORAS
+    // ================================
+
+    /**
+     * Función para obtener el estado completo del robot
+     */
+    fun refreshRobotStatus() {
+        viewModelScope.launch {
+            if (!isConnected()) return@launch
+
+            sendCommand(RobotCommand(action = RobotAction.GET_STATUS))
+            // Aquí podrías actualizar el estado completo del robot
+            // basándote en la respuesta del dispositivo
+        }
+    }
+
+    /**
+     * Función de emergencia - detiene todo
+     */
+    fun emergencyStop() {
+        viewModelScope.launch {
+            if (!isConnected()) return@launch
+
+            // Detener movimiento
+            sendCommand(RobotCommand(action = RobotAction.STOP))
+
+            // Desactivar automatización
+            sendCommand(RobotCommand(action = RobotAction.OBSTACLE_AVOIDANCE_OFF))
+            sendCommand(RobotCommand(action = RobotAction.LINE_FOLLOWING_OFF))
+
+            // Apagar sonidos
+            sendCommand(RobotCommand(action = RobotAction.HORN_OFF))
+
+            // Actualizar estado
+            _robotState.value = _robotState.value.copy(
+                isMoving = false,
+                currentSpeed = 0,
+                hornActive = false,
+                obstacleAvoidanceOn = false,
+                lineFollowingOn = false
+            )
+
+            Timber.d("🚨 PARADA DE EMERGENCIA ACTIVADA")
+            _commandResult.value = "🚨 PARADA DE EMERGENCIA"
+        }
     }
 }
